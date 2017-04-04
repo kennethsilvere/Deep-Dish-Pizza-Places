@@ -2,12 +2,15 @@ var self;
 
 function VM(){
 
+
+	
 	self=this;	
 	
 	self.map;
 	
 
 	self.pizzaPlaceValue = ko.observable(0);
+
 
 	self.locations = [
 			{title: "Atino's Pizza", value: 0, location: {lat: 41.867588, lng: -87.641953}},
@@ -39,15 +42,30 @@ function VM(){
 	
 	
 	self.showListing = function(){
+	
 		self.closeOptions();
 		self.hideListings();
     	var i = self.pizzaPlaceValue().value;	
 		var bounds = self.fullBounds;
 		self.markers[i].setMap(self.map); 
 		bounds.extend(self.markers[i].position);	
-		self.map.fitBounds(bounds);    
+		self.map.fitBounds(bounds); 
+
 	}
 
+
+	self.showPlace = function(v){
+		var i = v.value;
+		self.closeOptions();
+		self.hideListings();	
+		var bounds = self.fullBounds;
+		self.markers[i].setMap(self.map); 
+		bounds.extend(self.markers[i].position);	
+		self.map.fitBounds(bounds); 
+
+	}
+	
+	
 
 	self.showListings = function(){
 		
@@ -88,11 +106,27 @@ function VM(){
 			
 	}
 	
+	
+self.toggleBounce = function(marker) {
+  if (marker.getAnimation() !== null) {
+    marker.setAnimation(null);
+  } else {
+	  
+	  for(var i = 0; i < self.markers.length; i++){
+		  self.markers[i].setAnimation(null);
+	  }
+	  
+	  
+	   marker.setAnimation(google.maps.Animation.BOUNCE);	  	
+	  
+  }
+}
+	
+	
 
 }
 
 ko.applyBindings(new VM());
-
 
 
 
@@ -129,9 +163,15 @@ function initMap(){
             	animation: google.maps.Animation.DROP,
             	id: i
           	});
-	
 
-          
+		
+
+		marker.addListener('click', function(){
+			
+			self.toggleBounce(this);
+			
+		});
+						   
 		// Push the marker to our array of markers.
         self.markers.push(marker);
           
@@ -165,9 +205,14 @@ function populateInfoWindow(marker, infowindow) {
 		// Make sure the marker property is cleared if the infowindow is closed.
 		infowindow.addListener('closeclick', function() {
         infowindow.marker = null;
+			
+	for(var i = 0; i < self.markers.length; i++){
+		  self.markers[i].setAnimation(null);
+	  }
+			
 			});
           
-		
+	
 		var streetViewService = new google.maps.StreetViewService();
         var radius = 50;
         
@@ -218,6 +263,7 @@ function populateInfoWindow(marker, infowindow) {
 
 
 
+
 // This function takes in a COLOR, and then creates a new marker
 // icon of that color. The icon will be 21 px wide by 34 high, have an origin
 // of 0, 0 and be anchored at 10, 34).
@@ -231,3 +277,8 @@ function populateInfoWindow(marker, infowindow) {
           new google.maps.Size(21,34));
         return markerImage;
       }
+
+
+function loadPage(){
+	self.showListings();
+}
