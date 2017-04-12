@@ -39,7 +39,6 @@ function VM(){
 	
 	
 	self.showListing = function(){
-		
 		self.closeOptions();
 		self.hideListings();
     	var i = self.pizzaPlaceValue().value;	
@@ -59,22 +58,17 @@ function VM(){
 		self.markers[i].setMap(self.map); 
 		bounds.extend(self.markers[i].position);	
 		self.map.fitBounds(bounds); 
-
 	}
 	
 	
-
-	self.showListings = function(){
-		
+	self.showListings = function(){		
 		self.closeOptions();
     	var bounds = new google.maps.LatLngBounds();
 		self.fullBounds = bounds;
 	
-    	for(var i = 0; i < self.markers.length; i++){
-			
+    	for(var i = 0; i < self.markers.length; i++){			
 			self.markers[i].setMap(self.map);
-        	bounds.extend(self.markers[i].position);
-		
+        	bounds.extend(self.markers[i].position);		
         	}
 		
 		self.map.fitBounds(bounds);
@@ -105,8 +99,7 @@ function VM(){
 	}
 	
 	
-	self.toggleBounce = function(marker){
-		
+	self.toggleBounce = function(marker){		
 		if (marker.getAnimation() !== null){
 			marker.setAnimation(null);
 			}else{
@@ -145,11 +138,8 @@ function VM(){
 			return text;
 			}
 		
-		
-		
 			var yelp_url = 'https://api.yelp.com/v2/business/' + marker.yelp_id;
-		
-		
+
             var auth = {
                 consumerKey: "f2W7hjgGMMAvwXlj0ZxAWA",
                 consumerSecret: "DyxOgG0XEfir-hdM4yUxQmO9T-8",
@@ -159,9 +149,7 @@ function VM(){
                     signatureMethod: "HMAC-SHA1"
                 }
             };
-            
-
-				
+  
 			var parameters = {
                 oauth_consumer_key: auth.consumerKey,
                 oauth_token: auth.accessToken,
@@ -169,29 +157,25 @@ function VM(){
                 oauth_timestamp: Math.floor(Date.now() / 1000),
                 oauth_signature_method: 'HMAC-SHA1',
                 oauth_version: '1.0',
-                callback: 'cb' // This is crucial to include for jsonp implementation in AJAX or else the oauth-signature will be wrong.
+                callback: ''
             };
 		
 	         
 			var encodedSignature = oauthSignature.generate('GET', yelp_url, parameters, auth.consumerSecret, auth.accessTokenSecret);
             
-			parameters.oauth_signature = encodedSignature;
-            
+			parameters.oauth_signature = encodedSignature;            
 		
 			var selectedMarker = null;
 
-	
-		
 			var errorTimeout = setTimeout(function() {
 						alert("Something went wrong");
 					}, 8000);
-
 
 		
 			$.ajax({
                 url: yelp_url,
                 data: parameters,
-                cache: true, // This is crucial to include as well to prevent jQuery from adding on a cache-buster parameter "_=23489489749837", invalidating our oauth-signature
+                cache: true,
                 dataType: 'jsonp',
                 success: function(results) {
                     clearTimeout(errorTimeout);
@@ -227,13 +211,8 @@ function VM(){
 						alert("Problem occured!");
 					}
 				});
-
-		
-		
 	}
-	
 }
-
 
 ko.applyBindings(new VM());
 
@@ -271,13 +250,8 @@ function initMap(){
 				yelp_id: yelp
           	});
 
-		
-
-		marker.addListener('click', function(){
-			
+		marker.addListener('click', function(){			
 			self.toggleBounce(this);
-
-			
 		});
 						   
 // Push the marker to our array of markers.
@@ -311,20 +285,16 @@ function populateInfoWindow(marker, infowindow){
 // Make sure the marker property is cleared if the infowindow is closed.
 		infowindow.addListener('closeclick', function() {
         infowindow.marker = null;
-			
-			
+	
 			for(var i = 0; i < self.markers.length; i++){
 				self.markers[i].setAnimation(null);
 				}
 			
 			});
-
 		
-			self.yelp(marker.yelp_id, marker);
+		self.yelp(marker.yelp_id, marker);
 
         };
-		
-
         }
 
 
@@ -344,8 +314,6 @@ function makeMarkerIcon(markerColor){
 function loadPage(){
 	self.showListings();
 }
-
-
 
 function errorHandlingFunction(){
 	$("#map").html("<h1>Sorry cannot load google maps  :(</h1>");
