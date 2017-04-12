@@ -4,9 +4,9 @@ function VM() {
 
     self = this;
 
-    self.map;
+    self.map = null;
 
-    self.infowindow;
+    self.infowindow = null;
 
     self.pizzaPlaceValue = ko.observable(0);
 
@@ -21,7 +21,7 @@ function VM() {
     ];
 	
 	
-    self.fullBounds;
+    self.fullBounds = null;
 
 
     self.markers = [];
@@ -35,7 +35,7 @@ function VM() {
                 $(".responsive-title").show();
             }
         }
-    }
+    };
 
 
 
@@ -45,7 +45,7 @@ function VM() {
 		
 		var k;
 		var nh = self.pizzaPlaceValue().neighborhood;
-		if(nh !=""){
+		if(nh !==""){
 			self.hideListings();
 		for(k=5 ; k >= 0; k--){
 		 	if(nh == self.locations[k].neighborhood){
@@ -61,7 +61,7 @@ function VM() {
 				self.toggleBounce(self.markers[i]);
 				populateInfoWindow(self.markers[i], self.infowindow);
 				
-				if(k == 0){
+				if(k === 0){
 				self.locations[0].neighborhood = "";
 				}
 		 	}
@@ -69,7 +69,7 @@ function VM() {
 		
 		}
 		
-	}
+	};
 
 
     self.showPlace = function (v) {
@@ -82,7 +82,7 @@ function VM() {
 		self.toggleBounce(self.markers[i]);
 		populateInfoWindow(self.markers[i], self.infowindow);
 		
-    }
+    };
 
 
     self.showListings = function () {
@@ -96,7 +96,7 @@ function VM() {
         }
 
         self.map.fitBounds(bounds);
-    }
+    };
 
 
     self.hideListings = function () {
@@ -104,7 +104,7 @@ function VM() {
         for (var i = 0; i < self.markers.length; i++) {
             self.markers[i].setMap(null);
         }
-    }
+    };
 
 
 
@@ -120,7 +120,7 @@ function VM() {
             $(".options-box").show();
         }
 
-    }
+    };
 
 
     self.toggleBounce = function (marker) {
@@ -137,7 +137,7 @@ function VM() {
             }, 1400);
 
         }
-    }
+    };
 
 
     self.business = ko.observable('');
@@ -220,7 +220,7 @@ function VM() {
                     '</div>' +
                     '</div>';
 
-                if (self.infowindow != null) {
+                if (self.infowindow !== null) {
                     self.infowindow.close();
                 }
 
@@ -235,7 +235,7 @@ function VM() {
                 alert("Cannot render info! Sorry :(");
             }
         });
-    }
+    };
 }
 
 ko.applyBindings(new VM());
@@ -318,7 +318,7 @@ function populateInfoWindow(marker, infowindow) {
 
         self.yelp(marker.yelp_id, marker);
 
-    };
+    }
 }
 
 
