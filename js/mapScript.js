@@ -10,24 +10,77 @@ function VM() {
 
     self.pizzaPlaceValue = ko.observable(0);
 
-    self.locations = [
-        { title: "Atino's Pizza", value: 0, location: { lat: 41.867588, lng: -87.641953 }, yelp_id: "atinos-pizza-chicago", neighborhood: "" },
-        { title: "Bellonas Pizza", value: 1, location: { lat: 41.960971, lng: -87.714997 }, yelp_id: "bellonas-pizza-chicago", neighborhood: "Irving Park" },
-        { title: "Dimo's Pizza", value: 2, location: { lat: 41.945206, lng: -87.654694 }, yelp_id: "dimos-pizza-chicago-2", neighborhood: "Wrigley Field" },
-        { title: "Gino's East", value: 3, location: { lat: 41.896002, lng: -87.623033 }, yelp_id: "the-original-ginos-east-of-chicago-chicago-2", neighborhood: "The Magnificient Mile" },
-        { title: "Lou Malnati's Pizzeria", value: 4, location: { lat: 41.871506, lng: -87.627310 }, yelp_id: "lou-malnatis-pizzeria-chicago-9", neighborhood: "South Loop" },
-        { title: "Pequod's Pizza", value: 5, location: { lat: 41.921931, lng: -87.664308 }, yelp_id: "pequods-pizzeria-chicago", neighborhood: "Lincoln Park" }
+    self.locations = [{
+            title: "Atino's Pizza",
+            value: 0,
+            location: {
+                lat: 41.867588,
+                lng: -87.641953
+            },
+            yelp_id: "atinos-pizza-chicago",
+            neighborhood: ""
+        },
+        {
+            title: "Bellonas Pizza",
+            value: 1,
+            location: {
+                lat: 41.960971,
+                lng: -87.714997
+            },
+            yelp_id: "bellonas-pizza-chicago",
+            neighborhood: "Irving Park"
+        },
+        {
+            title: "Dimo's Pizza",
+            value: 2,
+            location: {
+                lat: 41.945206,
+                lng: -87.654694
+            },
+            yelp_id: "dimos-pizza-chicago-2",
+            neighborhood: "Wrigley Field"
+        },
+        {
+            title: "Gino's East",
+            value: 3,
+            location: {
+                lat: 41.896002,
+                lng: -87.623033
+            },
+            yelp_id: "the-original-ginos-east-of-chicago-chicago-2",
+            neighborhood: "The Magnificient Mile"
+        },
+        {
+            title: "Lou Malnati's Pizzeria",
+            value: 4,
+            location: {
+                lat: 41.871506,
+                lng: -87.627310
+            },
+            yelp_id: "lou-malnatis-pizzeria-chicago-9",
+            neighborhood: "South Loop"
+        },
+        {
+            title: "Pequod's Pizza",
+            value: 5,
+            location: {
+                lat: 41.921931,
+                lng: -87.664308
+            },
+            yelp_id: "pequods-pizzeria-chicago",
+            neighborhood: "Lincoln Park"
+        }
 
     ];
-	
-	
-    self.fullBounds = null;
 
+
+    self.filterLocations = ko.observableArray();
+
+    self.fullBounds = null;
 
     self.markers = [];
 
-
-    self.closeOptions = function () {
+    self.closeOptions = function() {
         if ($(window).width() < 996) {
             var display = $(".options-box").css("display");
             if (display != "none") {
@@ -37,55 +90,76 @@ function VM() {
         }
     };
 
+    self.hideUL = function() {
+        $("#locations").hide();
+    }
 
+    self.fElement = function() {
+        self.filterLocations.push({
+            title: "Atino's Pizza",
+            value: 0,
+            location: {
+                lat: 41.867588,
+                lng: -87.641953
+            },
+            yelp_id: "atinos-pizza-chicago",
+            neighborhood: "South Loop"
+        });
 
-    self.showListing = function () {
+    }
+
+    self.showListing = function() {
         self.closeOptions();
-        
-		
-		var k;
-		var nh = self.pizzaPlaceValue().neighborhood;
-		if(nh !==""){
-			self.hideListings();
-		for(k=5 ; k >= 0; k--){
-		 	if(nh == self.locations[k].neighborhood){
-				if(self.locations[k].value == 4){
-					self.locations[0].neighborhood = "South Loop";
-				}
-				
-				var i = k;
-				var bounds = self.fullBounds;
-				self.markers[i].setMap(self.map);
-				bounds.extend(self.markers[i].position);
-				self.map.fitBounds(bounds);
-				self.toggleBounce(self.markers[i]);
-				populateInfoWindow(self.markers[i], self.infowindow);
-				
-				if(k === 0){
-				self.locations[0].neighborhood = "";
-				}
-		 	}
-		}
-		
-		}
-		
-	};
+        self.hideUL();
+        self.filterLocations.removeAll();
+
+        var k;
+        var nh = self.pizzaPlaceValue().neighborhood;
+        if (nh !== "") {
+            self.hideListings();
+            for (k = 5; k >= 0; k--) {
+                if (nh == self.locations[k].neighborhood) {
+                    if (k != 0) {
+                        self.filterLocations.push(self.pizzaPlaceValue());
+                    } else {
+                        self.fElement();
+                    }
+
+                    if (self.locations[k].value == 4) {
+                        self.locations[0].neighborhood = "South Loop";
+                    }
+
+                    var i = k;
+                    var bounds = self.fullBounds;
+                    self.markers[i].setMap(self.map);
+                    bounds.extend(self.markers[i].position);
+                    self.map.fitBounds(bounds);
+                    self.toggleBounce(self.markers[i]);
+                    populateInfoWindow(self.markers[i], self.infowindow);
+
+                    if (k === 0) {
+                        self.locations[0].neighborhood = "";
+                    }
+                }
+            }
+        }
+    };
 
 
-    self.showPlace = function (v) {
+    self.showPlace = function(v) {
         var i = v.value;
         self.closeOptions();
         var bounds = self.fullBounds;
         self.markers[i].setMap(self.map);
         bounds.extend(self.markers[i].position);
         self.map.fitBounds(bounds);
-		self.toggleBounce(self.markers[i]);
-		populateInfoWindow(self.markers[i], self.infowindow);
-		
+        self.toggleBounce(self.markers[i]);
+        populateInfoWindow(self.markers[i], self.infowindow);
+
     };
 
 
-    self.showListings = function () {
+    self.showListings = function() {
         self.closeOptions();
         var bounds = new google.maps.LatLngBounds();
         self.fullBounds = bounds;
@@ -99,7 +173,7 @@ function VM() {
     };
 
 
-    self.hideListings = function () {
+    self.hideListings = function() {
         self.closeOptions();
         for (var i = 0; i < self.markers.length; i++) {
             self.markers[i].setMap(null);
@@ -109,7 +183,7 @@ function VM() {
 
 
 
-    self.showMenu = function () {
+    self.showMenu = function() {
         var display = $(".options-box").css("display");
 
         if (display != "none") {
@@ -123,7 +197,7 @@ function VM() {
     };
 
 
-    self.toggleBounce = function (marker) {
+    self.toggleBounce = function(marker) {
         if (marker.getAnimation() !== null) {
             marker.setAnimation(null);
         } else {
@@ -132,7 +206,7 @@ function VM() {
             }
 
             marker.setAnimation(google.maps.Animation.BOUNCE);
-            setTimeout(function () {
+            setTimeout(function() {
                 marker.setAnimation(null);
             }, 1400);
 
@@ -146,12 +220,12 @@ function VM() {
 
     self.reviews = ko.observableArray();
 
-    self.updateList = function (businessId) {
+    self.updateList = function(businessId) {
         self.yelp(businessId, null);
     };
 
 
-    self.yelp = function (businessId, marker) {
+    self.yelp = function(businessId, marker) {
 
         function nonce_generate(length) {
             var text = "";
@@ -191,7 +265,7 @@ function VM() {
 
         var selectedMarker = null;
 
-        var errorTimeout = setTimeout(function () {
+        var errorTimeout = setTimeout(function() {
             alert("Cannot render info! Sorry :(");
         }, 8000);
 
@@ -201,12 +275,12 @@ function VM() {
             data: parameters,
             cache: true,
             dataType: 'jsonp',
-            success: function (results) {
+            success: function(results) {
                 clearTimeout(errorTimeout);
                 self.business(results);
                 self.location(results.location.display_address);
                 self.reviews([]);
-                results.reviews.forEach(function (review) {
+                results.reviews.forEach(function(review) {
                     self.reviews.push({
                         review: review.excerpt + " - " + review.user.name
                     });
@@ -231,7 +305,7 @@ function VM() {
                 // Open the infowindow on the correct marker.
                 self.infowindow.open(self.map, marker);
             },
-            error: function(err){
+            error: function(err) {
                 alert("Cannot render info! Sorry :(");
             }
         });
@@ -243,11 +317,13 @@ ko.applyBindings(new VM());
 
 
 
-
 function initMap() {
     // Constructor creates a new map - only center and zoom are required.
     self.map = new google.maps.Map(document.getElementById('map'), {
-        center: { lat: 41.908412, lng: -87.67 },
+        center: {
+            lat: 41.908412,
+            lng: -87.67
+        },
         zoom: 12,
         mapTypeControl: false
 
@@ -274,7 +350,7 @@ function initMap() {
             yelp_id: yelp
         });
 
-        marker.addListener('click', function () {
+        marker.addListener('click', function() {
             self.toggleBounce(this);
         });
 
@@ -284,7 +360,7 @@ function initMap() {
         self.infowindow = largeInfowindow;
 
         // Create an onclick event to open the large infowindow at each marker.
-        marker.addListener('click', function () {
+        marker.addListener('click', function() {
             populateInfoWindow(this, self.infowindow);
         });
 
@@ -307,7 +383,7 @@ function populateInfoWindow(marker, infowindow) {
 
 
         // Make sure the marker property is cleared if the infowindow is closed.
-        infowindow.addListener('closeclick', function () {
+        infowindow.addListener('closeclick', function() {
             infowindow.marker = null;
 
             for (var i = 0; i < self.markers.length; i++) {
