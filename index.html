@@ -26,7 +26,7 @@
 
                 <h4> View Pizza Place</h4>
 
-                <ul id="locations" data-bind="foreach: locations">
+                <ul id="locations" data-bind="foreach: locations, visible: vList()">
 
                     <li>
                         <a data-bind="text: title, click: $root.showPlace.bind(this)"></a>

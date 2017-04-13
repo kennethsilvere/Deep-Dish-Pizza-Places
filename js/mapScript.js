@@ -90,8 +90,11 @@ function VM() {
         }
     };
 
+
+    self.vList = ko.observable(true);
+
     self.hideUL = function() {
-        $("#locations").hide();
+        self.vList(false);
     }
 
     self.fElement = function() {
